@@ -10,7 +10,7 @@ import _ from "lodash";
 
 import { logger } from "../../src/logger.js";
 import { runHooks } from "./hooks/crudHooks.js";
-import { getUserIDFromRequest, getWidgetBrandIDFromRequest, notWidgetUserBrandID } from "../jwt.js";
+import { getWidgetBrandIDFromRequest, notWidgetUserBrandID } from "../jwt.js";
 
 // todo-graham: generalize the error-catching code (and logging)
 

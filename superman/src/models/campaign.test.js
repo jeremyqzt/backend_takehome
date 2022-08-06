@@ -1,9 +1,7 @@
-import { addModelToInternalDB, listModelsFromInternalDB, getModelFromInternalDB } from "../db/internalDB.js";
+import { addModelToInternalDB } from "../db/internalDB.js";
 import { runHooks } from "../routes/hooks/crudHooks.js";
-import { CAMPAIGN_TYPE_ENCOURAGE_PURCHASES, CAMPAIGN_TYPE_ENCOURAGE_REFERRALS } from "../models/campaign.js";
-import { convertBrandTokenAmountToUSD } from "../business/campaignCalculations.js";
+import { CAMPAIGN_TYPE_ENCOURAGE_REFERRALS } from "./campaign.js";
 import _ from "lodash";
-import { logger } from "../logger.js";
 import { ulid } from "ulid";
 
 describe("encourage referrals campaign -- hooks", function () {
@@ -61,8 +59,9 @@ describe("encourage referrals campaign -- hooks", function () {
 		// test that the brand ID is set by the hook
 		expect(referralCampaignFromDB.brandID).toBe(BRAND_ID);
 
-		// addModelToInternalDB(`campaign`, referralCampaignFromDB);
 		expect(referralCampaignFromDB.remainingBudget).toBe(undefined);
+
+		addModelToInternalDB(`campaign`, referralCampaignFromDB);
 
 		const campaignReturned = await runHooks("getPost", `campaign`, referralCampaignFromDB, {});
 
@@ -70,6 +69,8 @@ describe("encourage referrals campaign -- hooks", function () {
 		expect(campaignReturned.totalFundAmount).toBe(referralCampaignFromDB.totalFundAmount);
 
 		// confirm there's a remaining budget field and that it's correct
+		// In the test data, only FB likes are active so...
+		// 1260 - 3.5*100 = 910
 		expect(campaignReturned.remainingBudget).toBe(910);
 	});
 });

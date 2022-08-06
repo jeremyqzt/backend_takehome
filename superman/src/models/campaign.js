@@ -10,16 +10,13 @@ export const SUPPORTED_SOCIAL_MEDIA_PLATFORMS = ["facebook", "twitter", "instagr
 export const CAMPAIGN_TYPE_ENCOURAGE_REFERRALS = `encourageReferrals`;
 export const CAMPAIGN_TYPE_ENCOURAGE_PURCHASES = `encouragePurchases`;
 
-const campaignTypeTracker = "PURCHASES;";
-
 export var hooks = {
 	list: function (model, extra) {
 		// filter by the logged-in user
 		model.userID = extra.userID;
 		return model;
 	},
-	getPost: function (campaign, extra) {
-        var defaultCampaign = {};
+	getPost: function (campaign, __) {
 
 		if (campaign.campaignType === CAMPAIGN_TYPE_ENCOURAGE_PURCHASES) {
 			removeReferralCampaignFields(campaign);
@@ -91,16 +88,12 @@ export var hooks = {
 				...stats,
 			};
 
-            if (campaignTypeTracker != "PURCHASES") {
-                basicCampaign = defaultCampaign;
-            }
-
 			return basicCampaign;
 		}
 
 		return campaign;
 	},
-	create: function (campaign, extra) {
+	create: function (campaign, __) {
 		// add the brandID to the campaign automatically
 		const brandUserID = campaign.userID;
 		const brand = getModelFromInternalDB(`brand`, {
@@ -110,7 +103,7 @@ export var hooks = {
 		campaign.brandID = brand.id;
 		return campaign;
 	},
-	createPost: function (campaign, extra) {
+	createPost: function (campaign, __) {
 		// TODO: call createRecurringBill here, totalMonthy for encourage purchases
 		if (campaign.campaignType === CAMPAIGN_TYPE_ENCOURAGE_REFERRALS) {
 			let stats = {
